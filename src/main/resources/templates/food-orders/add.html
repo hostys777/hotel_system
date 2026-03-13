@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建餐饮订单 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #f1c40f 100%);
+            min-height: 100vh;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 30px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(230, 126, 34, 0.1);
+            margin-bottom: 30px;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .form-header h2 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .form-header p {
+            color: #718096;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control-modern {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        .form-control-modern:focus {
+            outline: none;
+            border-color: #e67e22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+            background: white;
+        }
+        .form-select-modern {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        .form-select-modern:focus {
+            outline: none;
+            border-color: #e67e22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+            background: white;
+        }
+        .btn-modern {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+        }
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.3);
+            color: white;
+        }
+        .btn-secondary-modern {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        .btn-secondary-modern:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        .btn-success-modern {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .btn-success-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+        .dish-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        .dish-card:hover {
+            border-color: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(230, 126, 34, 0.1);
+        }
+        .dish-card .card-title {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        .dish-card .text-primary {
+            color: #e67e22 !important;
+            font-weight: 700;
+        }
+        .input-group-modern .btn {
+            border-color: #e2e8f0;
+            color: #e67e22;
+        }
+        .input-group-modern .btn:hover {
+            background: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+        .input-group-modern .form-control {
+            border-color: #e2e8f0;
+        }
+        .input-group-modern .form-control:focus {
+            border-color: #e67e22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand-modern {
+            font-weight: 700;
+            color: #e67e22 !important;
+            font-size: 1.3rem;
+        }
+        .nav-link-modern {
+            color: #4a5568 !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link-modern:hover {
+            color: #e67e22 !important;
+            transform: translateY(-1px);
+        }
+        .nav-link-modern.active {
+            color: #e67e22 !important;
+            font-weight: 600;
+        }
+        .alert-modern {
+            border-radius: 12px;
+            border: none;
+            padding: 15px 20px;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-modern" href="/">
+                <i class="fas fa-hotel me-2"></i>酒店管理系统
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link nav-link-modern" href="/">首页</a>
+                <a class="nav-link nav-link-modern" href="/rooms">房间管理</a>
+                <a class="nav-link nav-link-modern" href="/customers">客户管理</a>
+                <a class="nav-link nav-link-modern" href="/employees">员工管理</a>
+                <a class="nav-link nav-link-modern" href="/reservations">预订管理</a>
+                <a class="nav-link nav-link-modern active" href="/food-orders">餐饮订单</a>
+                <a class="nav-link nav-link-modern" href="/parking">停车管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- 订单信息 -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2><i class="fas fa-clipboard-list me-3"></i>订单信息</h2>
+                        <p>填写订单基本信息，然后选择菜品</p>
+                    </div>
+                    
+                    <!-- 消息显示 -->
+                    <div th:if="${successMessage}" class="alert alert-success alert-modern" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-modern" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    
+                    <form th:action="@{/food-orders/add}" method="post">
+                        <!-- 隐藏字段存储订单ID -->
+                        <input type="hidden" id="hiddenOrderId" th:value="${orderId}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="customerId" class="form-label">客户 *</label>
+                                    <select class="form-select-modern" id="customerId" name="customerId" required>
+                                        <option value="">请选择客户</option>
+                                        <option th:each="customer : ${customers}" 
+                                                th:value="${customer.id}" 
+                                                th:text="${customer.name + ' (' + customer.phone + ')'}"
+                                                th:selected="${selectedCustomerId != null && selectedCustomerId == customer.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="employeeId" class="form-label">服务员 *</label>
+                                    <select class="form-select-modern" id="employeeId" name="employeeId" required>
+                                        <option value="">请选择服务员</option>
+                                        <option th:each="employee : ${employees}" 
+                                                th:value="${employee.id}" 
+                                                th:text="${employee.name + ' (' + employee.employeeNumber + ')'}"
+                                                th:selected="${selectedEmployeeId != null && selectedEmployeeId == employee.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="tableNumber" class="form-label">桌号 *</label>
+                                    <input type="text" class="form-control-modern" id="tableNumber" name="tableNumber" 
+                                           th:value="${selectedTableNumber != null ? selectedTableNumber : ''}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="roomNumber" class="form-label">房间号（挂房账时填写）</label>
+                                    <input type="text" class="form-control-modern" id="roomNumber" name="roomNumber" 
+                                           th:value="${selectedRoomNumber != null ? selectedRoomNumber : ''}"
+                                           placeholder="如需要挂房账请填写房间号">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="notes" class="form-label">备注</label>
+                                    <input type="text" class="form-control-modern" id="notes" name="notes" 
+                                           th:value="${selectedNotes != null ? selectedNotes : ''}"
+                                           placeholder="订单备注信息">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                请先创建订单，然后选择菜品添加到订单中
+                            </small>
+                            <button type="submit" class="btn-modern btn-primary-modern">
+                                <i class="fas fa-plus"></i>创建订单
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 菜品选择 -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2><i class="fas fa-utensils me-3"></i>选择菜品</h2>
+                        <p>浏览并选择您需要的菜品</p>
+                    </div>
+                    
+                    <!-- 菜品分类筛选 -->
+                    <div class="form-group">
+                        <label for="categoryFilter" class="form-label">菜品分类</label>
+                        <select class="form-select-modern" id="categoryFilter">
+                            <option value="">全部分类</option>
+                            <option th:each="category : ${categories}" 
+                                    th:value="${category}" 
+                                    th:text="${category}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- 菜品列表 -->
+                    <div class="row" id="dishesList">
+                        <div class="col-md-6 col-lg-4 mb-3" th:each="dish : ${dishes}">
+                            <div class="card h-100 dish-card" th:attr="data-category=${dish.category}">
+                                <div class="card-body">
+                                    <h6 class="card-title" th:text="${dish.name}"></h6>
+                                    <p class="card-text text-muted small" th:text="${dish.description}"></p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold">¥<span th:text="${#numbers.formatDecimal(dish.price, 1, 2)}"></span></span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="input-group input-group-sm input-group-modern">
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    th:onclick="'decreaseQuantity(' + ${dish.id} + ')'">-</button>
+                                            <input type="number" class="form-control text-center" 
+                                                   th:id="'quantity_' + ${dish.id}" value="0" min="0" 
+                                                   th:max="${dish.stockQuantity}">
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    th:onclick="'increaseQuantity(' + ${dish.id} + ')'">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- 当前订单 -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2><i class="fas fa-shopping-cart me-3"></i>当前订单</h2>
+                        <p>查看已选择的菜品</p>
+                    </div>
+                    
+                    <div id="orderItems">
+                        <p class="text-muted text-center">暂无菜品</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>总计：</strong>
+                        <strong id="totalAmount">¥0.00</strong>
+                    </div>
+                    <div id="orderStatus" class="alert alert-info alert-modern mb-3" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="statusText">请先创建订单</span>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn-modern btn-success-modern w-100" id="addToOrderBtn" disabled>
+                            <i class="fas fa-plus"></i>添加到订单
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedDishes = {};
+        let currentOrderId = null;
+        
+        // 从隐藏字段获取订单ID
+        function getOrderId() {
+            const hiddenOrderId = document.getElementById('hiddenOrderId');
+            if (hiddenOrderId && hiddenOrderId.value) {
+                currentOrderId = parseInt(hiddenOrderId.value);
+                console.log('从隐藏字段获取订单ID:', currentOrderId);
+            }
+            return currentOrderId;
+        }
+
+        // 菜品分类筛选
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const selectedCategory = this.value;
+            const dishCards = document.querySelectorAll('.dish-card');
+            
+            dishCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                if (selectedCategory === '' || category === selectedCategory) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 增加数量
+        function increaseQuantity(dishId) {
+            const input = document.getElementById('quantity_' + dishId);
+            const max = parseInt(input.getAttribute('max'));
+            const current = parseInt(input.value);
+            
+            if (current < max) {
+                input.value = current + 1;
+                updateSelectedDishes();
+            }
+        }
+
+        // 减少数量
+        function decreaseQuantity(dishId) {
+            const input = document.getElementById('quantity_' + dishId);
+            const current = parseInt(input.value);
+            
+            if (current > 0) {
+                input.value = current - 1;
+                updateSelectedDishes();
+            }
+        }
+
+        // 更新选中的菜品
+        function updateSelectedDishes() {
+            selectedDishes = {};
+            const inputs = document.querySelectorAll('input[id^="quantity_"]');
+            
+            inputs.forEach(input => {
+                const dishId = input.id.replace('quantity_', '');
+                const quantity = parseInt(input.value);
+                
+                if (quantity > 0) {
+                    selectedDishes[dishId] = quantity;
+                }
+            });
+            
+            updateOrderDisplay();
+        }
+
+        // 更新订单显示
+        function updateOrderDisplay() {
+            const orderItemsDiv = document.getElementById('orderItems');
+            const totalAmountSpan = document.getElementById('totalAmount');
+            const addToOrderBtn = document.getElementById('addToOrderBtn');
+            const orderStatus = document.getElementById('orderStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (Object.keys(selectedDishes).length === 0) {
+                orderItemsDiv.innerHTML = '<p class="text-muted text-center">暂无菜品</p>';
+                totalAmountSpan.textContent = '¥0.00';
+                addToOrderBtn.disabled = true;
+                
+                // 更新状态显示
+                if (currentOrderId) {
+                    orderStatus.style.display = 'none';
+                } else {
+                    orderStatus.style.display = 'block';
+                    statusText.textContent = '请先创建订单';
+                }
+                return;
+            }
+            
+            let html = '';
+            let totalAmount = 0;
+            
+            Object.keys(selectedDishes).forEach(dishId => {
+                const quantity = selectedDishes[dishId];
+                const dishCard = document.querySelector(`[data-category] input[id="quantity_${dishId}"]`).closest('.card');
+                const dishName = dishCard.querySelector('.card-title').textContent;
+                const dishPrice = parseFloat(dishCard.querySelector('.text-primary span').textContent);
+                const itemTotal = dishPrice * quantity;
+                totalAmount += itemTotal;
+                
+                html += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <small class="fw-bold">${dishName}</small><br>
+                            <small class="text-muted">¥${dishPrice.toFixed(2)} × ${quantity}</small>
+                        </div>
+                        <small class="text-primary fw-bold">¥${itemTotal.toFixed(2)}</small>
+                    </div>
+                `;
+            });
+            
+            orderItemsDiv.innerHTML = html;
+            totalAmountSpan.textContent = '¥' + totalAmount.toFixed(2);
+            
+            // 更新状态显示
+            getOrderId(); // 确保获取最新的订单ID
+            if (currentOrderId) {
+                orderStatus.style.display = 'none';
+                addToOrderBtn.disabled = false;
+            } else {
+                orderStatus.style.display = 'block';
+                statusText.textContent = '请先创建订单';
+                addToOrderBtn.disabled = true;
+            }
+        }
+
+        // 添加到订单
+        document.getElementById('addToOrderBtn').addEventListener('click', function() {
+            if (Object.keys(selectedDishes).length === 0) {
+                alert('请先选择菜品');
+                return;
+            }
+            
+            if (!currentOrderId) {
+                // 如果还没有创建订单，先创建订单
+                createOrderFirst();
+                return;
+            }
+            
+            // 添加每个选中的菜品
+            let addedCount = 0;
+            Object.keys(selectedDishes).forEach(dishId => {
+                const quantity = selectedDishes[dishId];
+                if (quantity > 0) {
+                    addDishToOrder(dishId, quantity);
+                    addedCount++;
+                }
+            });
+            
+            if (addedCount > 0) {
+                // 清空选中的菜品
+                selectedDishes = {};
+                updateOrderDisplay();
+                
+                // 重置所有数量输入框
+                document.querySelectorAll('input[id^="quantity_"]').forEach(input => {
+                    input.value = 0;
+                });
+                
+                alert('正在添加菜品到订单...');
+            }
+        });
+        
+        // 先创建订单
+        function createOrderFirst() {
+            // 获取表单数据
+            const customerId = document.getElementById('customerId').value;
+            const employeeId = document.getElementById('employeeId').value;
+            const tableNumber = document.getElementById('tableNumber').value;
+            const roomNumber = document.getElementById('roomNumber').value;
+            const notes = document.getElementById('notes').value;
+            
+            if (!customerId || !employeeId || !tableNumber) {
+                alert('请先填写完整的订单信息（客户、服务员、桌号）');
+                return;
+            }
+            
+            console.log('正在创建订单...', {customerId, employeeId, tableNumber, roomNumber, notes});
+            
+            // 提交表单创建订单
+            const form = document.querySelector('form[action="/food-orders/add"]');
+            form.submit();
+        }
+        
+        // 添加单个菜品到订单
+        function addDishToOrder(dishId, quantity) {
+            getOrderId(); // 确保获取最新的订单ID
+            console.log('添加菜品到订单:', {dishId, quantity, currentOrderId});
+            
+            if (!currentOrderId) {
+                console.error('订单ID为空，无法添加菜品');
+                alert('订单ID为空，请先创建订单');
+                return;
+            }
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/food-orders/add-item';
+            
+            // 添加订单ID
+            const orderIdInput = document.createElement('input');
+            orderIdInput.type = 'hidden';
+            orderIdInput.name = 'orderId';
+            orderIdInput.value = currentOrderId;
+            form.appendChild(orderIdInput);
+            
+            // 添加菜品ID
+            const dishIdInput = document.createElement('input');
+            dishIdInput.type = 'hidden';
+            dishIdInput.name = 'dishId';
+            dishIdInput.value = dishId;
+            form.appendChild(dishIdInput);
+            
+            // 添加数量
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'hidden';
+            quantityInput.name = 'quantity';
+            quantityInput.value = quantity;
+            form.appendChild(quantityInput);
+            
+            console.log('提交表单:', form.action, {orderId: currentOrderId, dishId, quantity});
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // 监听所有数量输入框的变化
+        document.addEventListener('input', function(e) {
+            if (e.target.id && e.target.id.startsWith('quantity_')) {
+                updateSelectedDishes();
+            }
+        });
+        
+        // 页面加载时初始化状态
+        document.addEventListener('DOMContentLoaded', function() {
+            getOrderId();
+            console.log('页面加载完成，当前订单ID:', currentOrderId);
+            updateOrderDisplay();
+        });
+    </script>
+</body>
+</html>

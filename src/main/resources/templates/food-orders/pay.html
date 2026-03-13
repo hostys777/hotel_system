@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付订单 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .qr-code {
+            width: 100%;
+            max-width: 300px;
+            height: 300px;
+            background: white;
+            border: 3px solid #dee2e6;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .qr-code canvas {
+            border-radius: 8px;
+        }
+        .payment-method-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .payment-method-card:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .payment-method-card.selected {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-hotel me-2"></i>酒店管理系统
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">首页</a>
+                <a class="nav-link" href="/rooms">房间管理</a>
+                <a class="nav-link" href="/customers">客户管理</a>
+                <a class="nav-link" href="/reservations">预订管理</a>
+                <a class="nav-link active" href="/food-orders">餐饮订单</a>
+                <a class="nav-link" href="/employees">员工管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-credit-card me-2"></i>支付订单</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- 订单信息 -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>订单信息</h6>
+                                <p><strong>订单号：</strong><span th:text="${order.id}"></span></p>
+                                <p><strong>客户：</strong><span th:text="${order.customer.name}"></span></p>
+                                <p><strong>桌号：</strong><span th:text="${order.tableNumber}"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>金额信息</h6>
+                                <p><strong>总金额：</strong><span class="text-primary fs-4">¥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></span></p>
+                                <p><strong>状态：</strong><span class="badge bg-warning" th:text="${order.status.description}"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- 支付方式选择 -->
+                        <form th:action="@{/food-orders/pay/{id}(id=${order.id})}" method="post" id="paymentForm">
+                            <h6 class="mb-3">选择支付方式</h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="payment-method-card" onclick="selectPaymentMethod('CASH')">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="cash" value="CASH">
+                                            <label class="form-check-label" for="cash">
+                                                <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                                <strong>现金支付</strong>
+                                                <br><small class="text-muted">直接现金付款</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="payment-method-card" onclick="selectPaymentMethod('CARD')">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="CARD">
+                                            <label class="form-check-label" for="card">
+                                                <i class="fas fa-credit-card text-primary me-2"></i>
+                                                <strong>刷卡支付</strong>
+                                                <br><small class="text-muted">POS机刷卡</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="payment-method-card" onclick="selectPaymentMethod('ROOM_CHARGE')">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="roomCharge" value="ROOM_CHARGE">
+                                            <label class="form-check-label" for="roomCharge">
+                                                <i class="fas fa-bed text-info me-2"></i>
+                                                <strong>挂房账</strong>
+                                                <br><small class="text-muted">挂到房间账单</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="payment-method-card" onclick="selectPaymentMethod('ONLINE')">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="online" value="ONLINE">
+                                            <label class="form-check-label" for="online">
+                                                <i class="fas fa-qrcode text-warning me-2"></i>
+                                                <strong>在线支付</strong>
+                                                <br><small class="text-muted">扫码支付</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 二维码支付区域 -->
+                            <div id="qrCodeArea" class="mt-4" style="display: none;">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="text-center mb-4">
+                                            <i class="fas fa-qrcode me-2"></i>请扫描二维码完成支付
+                                        </h5>
+                                    </div>
+                                </div>
+                                
+                                <div class="row justify-content-center">
+                                    <div class="col-md-6 col-lg-5">
+                                        <div class="qr-code" id="qrCodeContainer">
+                                            <!-- 二维码将在这里生成 -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-5">
+                                        <div class="payment-details">
+                                            <div class="card h-100">
+                                                <div class="card-body d-flex flex-column justify-content-center">
+                                                    <h6 class="card-title">
+                                                        <i class="fas fa-receipt me-2"></i>订单详情
+                                                    </h6>
+                                                    <div class="mb-3">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <span class="text-muted">订单号：</span>
+                                                            <strong th:text="${order.id}"></strong>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <span class="text-muted">客户：</span>
+                                                            <strong th:text="${order.customer.name}"></strong>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <span class="text-muted">桌号：</span>
+                                                            <strong th:text="${order.tableNumber}"></strong>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="d-flex justify-content-between">
+                                                            <span class="text-muted">支付金额：</span>
+                                                            <strong class="text-success fs-5">¥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <i class="fas fa-mobile-alt text-primary me-1"></i>
+                                                        <small class="text-muted">扫码支付</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12 text-center">
+                                        <p class="text-muted">
+                                            <i class="fab fa-weixin me-1"></i>
+                                            使用微信或支付宝扫描上方二维码
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="/food-orders" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>返回
+                                </a>
+                                <button type="submit" class="btn btn-success" id="payButton" disabled>
+                                    <i class="fas fa-check me-1"></i>确认支付
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectPaymentMethod(method) {
+            // 清除所有选中状态
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 选中当前卡片
+            event.currentTarget.classList.add('selected');
+            
+            // 选中对应的radio按钮
+            document.getElementById(method.toLowerCase().replace('_', '')).checked = true;
+            
+            // 启用支付按钮
+            document.getElementById('payButton').disabled = false;
+            
+            // 显示二维码（仅在线支付）
+            const qrCodeArea = document.getElementById('qrCodeArea');
+            if (method === 'ONLINE') {
+                qrCodeArea.style.display = 'block';
+                generateQRCode();
+            } else {
+                qrCodeArea.style.display = 'none';
+            }
+        }
+        
+        // 生成本地模拟二维码
+        function generateQRCode() {
+            const container = document.getElementById('qrCodeContainer');
+            if (!container) {
+                console.error('二维码容器未找到');
+                return;
+            }
+            
+            console.log('开始生成二维码...');
+            container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i><br>正在生成二维码...</div>';
+            
+            // 生成支付链接（模拟）
+            const orderId = /*[[${order.id}]]*/ null;
+            const amount = /*[[${order.totalAmount}]]*/ null;
+            
+            // 如果订单数据不可用，使用随机数据
+            const finalOrderId = orderId || Math.floor(Math.random() * 10000) + 1000;
+            const finalAmount = amount || (Math.random() * 100 + 10).toFixed(2);
+            
+            console.log('生成二维码，订单ID:', finalOrderId, '金额:', finalAmount);
+            
+            // 立即生成二维码，不使用延迟
+            try {
+                container.innerHTML = '';
+                
+                // 创建二维码容器
+                const qrDiv = document.createElement('div');
+                qrDiv.className = 'local-qr-code';
+                qrDiv.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    background: white;
+                    border: none;
+                    position: relative;
+                    margin: 0;
+                    display: grid;
+                    grid-template-columns: repeat(20, 1fr);
+                    grid-template-rows: repeat(20, 1fr);
+                    gap: 0px;
+                    padding: 8px;
+                    box-sizing: border-box;
+                `;
+                
+                // 生成简化的二维码图案
+                try {
+                    generateSimpleQRPattern(qrDiv, finalOrderId, finalAmount);
+                } catch (error) {
+                    console.error('二维码图案生成失败，使用备用方法:', error);
+                    generateFallbackQR(qrDiv, finalOrderId, finalAmount);
+                }
+                
+                container.appendChild(qrDiv);
+                
+                // 添加订单信息显示
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'mt-2 text-center';
+                infoDiv.innerHTML = `
+                    <small class="text-muted">
+                        <div>订单号: ${finalOrderId}</div>
+                        <div class="mt-1"><i class="fas fa-mobile-alt"></i> 扫码支付</div>
+                    </small>
+                `;
+                container.appendChild(infoDiv);
+                
+                console.log('本地二维码生成成功');
+            } catch (error) {
+                console.error('二维码生成失败:', error);
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        二维码生成失败<br>
+                        <small>请刷新重试</small>
+                    </div>
+                `;
+            }
+        }
+        
+        // 生成简化的二维码图案
+        function generateSimpleQRPattern(container, orderId, amount) {
+            console.log('开始生成二维码图案...');
+            
+            // 基于订单ID和金额生成伪随机图案
+            const seed = orderId + parseInt(amount.replace('.', ''));
+            const random = new SeededRandom(seed);
+            
+            // 生成20x20的网格（更精细）
+            for (let row = 0; row < 20; row++) {
+                for (let col = 0; col < 20; col++) {
+                    const cell = document.createElement('div');
+                    
+                    // 确定位置模式
+                    let isBlack = false;
+                    
+                    // 三个角落的定位点（适应20x20网格）
+                    if ((row < 7 && col < 7) || 
+                        (row < 7 && col > 12) || 
+                        (row > 12 && col < 7)) {
+                        // 定位点外框
+                        if ((row === 0 || row === 6) && col >= 0 && col <= 6) isBlack = true;
+                        if ((col === 0 || col === 6) && row >= 0 && row <= 6) isBlack = true;
+                        // 定位点内部
+                        if (row >= 2 && row <= 4 && col >= 2 && col <= 4) isBlack = true;
+                    }
+                    // 中心点
+                    else if (row === 9 && col === 9) {
+                        isBlack = true;
+                    }
+                    // 其他位置使用伪随机
+                    else {
+                        isBlack = random.next() > 0.5;
+                    }
+                    
+                    // 设置方块的样式，确保它们是方方正正的
+                    cell.style.cssText = `
+                        background-color: ${isBlack ? '#000' : '#fff'};
+                        border: none;
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                        min-width: 0;
+                        min-height: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: block;
+                    `;
+                    
+                    container.appendChild(cell);
+                }
+            }
+            
+            console.log('二维码图案生成完成');
+        }
+        
+        // 简单的伪随机数生成器
+        function SeededRandom(seed) {
+            this.seed = seed;
+            this.next = function() {
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            };
+        }
+        
+        // 备用二维码生成方法（更简单）
+        function generateFallbackQR(container, orderId, amount) {
+            console.log('使用备用二维码生成方法');
+            
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 创建简单的二维码图案
+            const qrText = `订单:${orderId}\n扫码支付`;
+            const qrDiv = document.createElement('div');
+            qrDiv.style.cssText = `
+                width: 100%;
+                height: 100%;
+                background: white;
+                border: 2px solid #000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: monospace;
+                font-size: 12px;
+                text-align: center;
+                line-height: 1.2;
+                box-sizing: border-box;
+            `;
+            
+            // 添加简单的图案
+            const pattern = document.createElement('div');
+            pattern.style.cssText = `
+                width: 100px;
+                height: 100px;
+                background: white;
+                border: 2px solid #000;
+                display: grid;
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+                gap: 0px;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            `;
+            
+            // 生成简单的网格图案
+            for (let i = 0; i < 100; i++) {
+                const miniCell = document.createElement('div');
+                const isBlack = Math.random() > 0.5;
+                miniCell.style.cssText = `
+                    background-color: ${isBlack ? '#000' : '#fff'};
+                    border: none;
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                    width: 100%;
+                    height: 100%;
+                `;
+                pattern.appendChild(miniCell);
+            }
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = qrText;
+            textDiv.style.cssText = `
+                color: #000;
+                font-weight: bold;
+            `;
+            
+            qrDiv.appendChild(pattern);
+            qrDiv.appendChild(textDiv);
+            container.appendChild(qrDiv);
+            
+            console.log('备用二维码生成完成');
+        }
+        
+        // 表单提交确认
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!selectedMethod) {
+                e.preventDefault();
+                alert('请选择支付方式');
+                return;
+            }
+            
+            const methodName = selectedMethod.value;
+            const methodText = selectedMethod.nextElementSibling.querySelector('strong').textContent;
+            
+            if (confirm(`确认使用 ${methodText} 支付 ¥${document.querySelector('.text-primary span').textContent} 吗？`)) {
+                // 显示支付处理中
+                const payButton = document.getElementById('payButton');
+                payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>处理中...';
+                payButton.disabled = true;
+            } else {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

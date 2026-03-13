@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车辆入场 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .checkin-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .spot-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .spot-card:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .spot-card.selected {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-hotel me-2"></i>酒店管理系统
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">首页</a>
+                <a class="nav-link" href="/rooms">房间管理</a>
+                <a class="nav-link" href="/customers">客户管理</a>
+                <a class="nav-link" href="/reservations">预订管理</a>
+                <a class="nav-link" href="/food-orders">餐饮订单</a>
+                <a class="nav-link" href="/employees">员工管理</a>
+                <a class="nav-link active" href="/parking">停车管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- 入场卡片 -->
+                <div class="checkin-card text-center">
+                    <h2><i class="fas fa-car me-2"></i>车辆入场登记</h2>
+                    <p class="mb-0">请选择客户和停车位，完成车辆入场登记</p>
+                </div>
+
+                <!-- 消息提示 -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <form th:action="@{/parking/checkin}" method="post">
+                    <div class="row">
+                        <!-- 客户信息 -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-user me-2"></i>客户信息</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="customerId" class="form-label">选择客户 *</label>
+                                        <select class="form-select" id="customerId" name="customerId" required>
+                                            <option value="">请选择客户</option>
+                                            <option th:each="customer : ${customers}" 
+                                                    th:value="${customer.id}" 
+                                                    th:text="${customer.name + ' (' + customer.phone + ')'}">张三 (13800138001)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 车辆信息 -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-car me-2"></i>车辆信息</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="licensePlate" class="form-label">车牌号 *</label>
+                                        <input type="text" class="form-control" id="licensePlate" name="licensePlate" 
+                                               placeholder="如：京A12345" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="vehicleType" class="form-label">车辆类型</label>
+                                            <select class="form-select" id="vehicleType" name="vehicleType">
+                                                <option value="">请选择</option>
+                                                <option value="轿车">轿车</option>
+                                                <option value="SUV">SUV</option>
+                                                <option value="商务车">商务车</option>
+                                                <option value="货车">货车</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="vehicleColor" class="form-label">车辆颜色</label>
+                                            <select class="form-select" id="vehicleColor" name="vehicleColor">
+                                                <option value="">请选择</option>
+                                                <option value="白色">白色</option>
+                                                <option value="黑色">黑色</option>
+                                                <option value="银色">银色</option>
+                                                <option value="红色">红色</option>
+                                                <option value="蓝色">蓝色</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">备注</label>
+                                        <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                                  placeholder="如：特殊要求或注意事项"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 停车位选择 -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-parking me-2"></i>选择停车位</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" th:if="${availableSpots != null and !availableSpots.isEmpty()}">
+                                <div class="col-md-3 col-sm-4 col-6 mb-3" th:each="spot : ${availableSpots}">
+                                    <div class="spot-card" th:onclick="'selectSpot(' + ${spot.id} + ')'">
+                                        <div class="spot-number fw-bold" th:text="${spot.spotNumber}">A01</div>
+                                        <div class="spot-type" th:text="${spot.spotType.description}">标准车位</div>
+                                        <div class="spot-location small text-muted" th:text="${spot.location}">地下车库</div>
+                                        <div class="spot-rate text-primary fw-bold">
+                                            ¥<span th:text="${#numbers.formatDecimal(spot.hourlyRate, 1, 2)}">5.00</span>/小时
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${availableSpots == null or availableSpots.isEmpty()}" class="text-center text-muted">
+                                <i class="fas fa-parking fa-3x mb-3"></i>
+                                <p>暂无可用的停车位</p>
+                            </div>
+                            <input type="hidden" id="selectedSpotId" name="spotId" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="/parking" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>返回
+                        </a>
+                        <button type="submit" class="btn btn-success" id="submitBtn" disabled>
+                            <i class="fas fa-check me-1"></i>确认入场
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedSpotId = null;
+        
+        function selectSpot(spotId) {
+            // 移除之前选中的样式
+            document.querySelectorAll('.spot-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 添加选中样式
+            event.target.closest('.spot-card').classList.add('selected');
+            
+            // 设置选中的停车位ID
+            selectedSpotId = spotId;
+            document.getElementById('selectedSpotId').value = spotId;
+            
+            // 启用提交按钮
+            document.getElementById('submitBtn').disabled = false;
+        }
+        
+        // 表单验证
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (!selectedSpotId) {
+                e.preventDefault();
+                alert('请选择一个停车位');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

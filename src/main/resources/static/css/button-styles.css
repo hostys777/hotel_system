@@ -1,0 +1,347 @@
+/* 统一按钮样式系统 */
+:root {
+    --btn-primary: #667eea;
+    --btn-primary-hover: #5a67d8;
+    --btn-primary-shadow: rgba(102, 126, 234, 0.3);
+    
+    --btn-success: #10b981;
+    --btn-success-hover: #059669;
+    --btn-success-shadow: rgba(16, 185, 129, 0.3);
+    
+    --btn-warning: #f59e0b;
+    --btn-warning-hover: #d97706;
+    --btn-warning-shadow: rgba(245, 158, 11, 0.3);
+    
+    --btn-danger: #ef4444;
+    --btn-danger-hover: #dc2626;
+    --btn-danger-shadow: rgba(239, 68, 68, 0.3);
+    
+    --btn-info: #06b6d4;
+    --btn-info-hover: #0891b2;
+    --btn-info-shadow: rgba(6, 182, 212, 0.3);
+    
+    --btn-secondary: #6b7280;
+    --btn-secondary-hover: #4b5563;
+    --btn-secondary-shadow: rgba(107, 114, 128, 0.3);
+    
+    --btn-gold: #fbbf24;
+    --btn-gold-hover: #f59e0b;
+    --btn-gold-shadow: rgba(251, 191, 36, 0.3);
+}
+
+/* 基础按钮样式 */
+.btn-luxury {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    min-width: 120px;
+    height: 48px;
+}
+
+.btn-luxury::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-luxury:hover::before {
+    left: 100%;
+}
+
+.btn-luxury:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-luxury:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-luxury:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.btn-luxury:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 按钮变体 */
+.btn-luxury-primary {
+    background: linear-gradient(135deg, var(--btn-primary) 0%, #764ba2 100%);
+    color: white;
+    border-color: var(--btn-primary);
+}
+
+.btn-luxury-primary:hover {
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, #6b46c1 100%);
+    border-color: var(--btn-primary-hover);
+    color: white;
+}
+
+.btn-luxury-success {
+    background: linear-gradient(135deg, var(--btn-success) 0%, #059669 100%);
+    color: white;
+    border-color: var(--btn-success);
+}
+
+.btn-luxury-success:hover {
+    background: linear-gradient(135deg, var(--btn-success-hover) 0%, #047857 100%);
+    border-color: var(--btn-success-hover);
+    color: white;
+}
+
+.btn-luxury-warning {
+    background: linear-gradient(135deg, var(--btn-warning) 0%, #d97706 100%);
+    color: white;
+    border-color: var(--btn-warning);
+}
+
+.btn-luxury-warning:hover {
+    background: linear-gradient(135deg, var(--btn-warning-hover) 0%, #b45309 100%);
+    border-color: var(--btn-warning-hover);
+    color: white;
+}
+
+.btn-luxury-danger {
+    background: linear-gradient(135deg, var(--btn-danger) 0%, #dc2626 100%);
+    color: white;
+    border-color: var(--btn-danger);
+}
+
+.btn-luxury-danger:hover {
+    background: linear-gradient(135deg, var(--btn-danger-hover) 0%, #b91c1c 100%);
+    border-color: var(--btn-danger-hover);
+    color: white;
+}
+
+.btn-luxury-info {
+    background: linear-gradient(135deg, var(--btn-info) 0%, #0891b2 100%);
+    color: white;
+    border-color: var(--btn-info);
+}
+
+.btn-luxury-info:hover {
+    background: linear-gradient(135deg, var(--btn-info-hover) 0%, #0e7490 100%);
+    border-color: var(--btn-info-hover);
+    color: white;
+}
+
+.btn-luxury-secondary {
+    background: linear-gradient(135deg, var(--btn-secondary) 0%, #4b5563 100%);
+    color: white;
+    border-color: var(--btn-secondary);
+}
+
+.btn-luxury-secondary:hover {
+    background: linear-gradient(135deg, var(--btn-secondary-hover) 0%, #374151 100%);
+    border-color: var(--btn-secondary-hover);
+    color: white;
+}
+
+.btn-luxury-gold {
+    background: linear-gradient(135deg, var(--btn-gold) 0%, #f59e0b 100%);
+    color: #1f2937;
+    border-color: var(--btn-gold);
+    font-weight: 700;
+}
+
+.btn-luxury-gold:hover {
+    background: linear-gradient(135deg, var(--btn-gold-hover) 0%, #d97706 100%);
+    border-color: var(--btn-gold-hover);
+    color: #1f2937;
+}
+
+/* 轮廓按钮 */
+.btn-luxury-outline {
+    background: transparent;
+    border: 2px solid var(--btn-primary);
+    color: var(--btn-primary);
+}
+
+.btn-luxury-outline:hover {
+    background: var(--btn-primary);
+    color: white;
+}
+
+.btn-luxury-outline-success {
+    background: transparent;
+    border: 2px solid var(--btn-success);
+    color: var(--btn-success);
+}
+
+.btn-luxury-outline-success:hover {
+    background: var(--btn-success);
+    color: white;
+}
+
+.btn-luxury-outline-danger {
+    background: transparent;
+    border: 2px solid var(--btn-danger);
+    color: var(--btn-danger);
+}
+
+.btn-luxury-outline-danger:hover {
+    background: var(--btn-danger);
+    color: white;
+}
+
+/* 按钮尺寸 */
+.btn-luxury-sm {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    min-width: 100px;
+    height: 36px;
+}
+
+.btn-luxury-lg {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    min-width: 140px;
+    height: 56px;
+}
+
+.btn-luxury-xl {
+    padding: 20px 40px;
+    font-size: 1.25rem;
+    min-width: 160px;
+    height: 64px;
+}
+
+/* 圆形按钮 */
+.btn-luxury-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    padding: 0;
+    min-width: auto;
+}
+
+.btn-luxury-circle.btn-luxury-sm {
+    width: 36px;
+    height: 36px;
+}
+
+.btn-luxury-circle.btn-luxury-lg {
+    width: 56px;
+    height: 56px;
+}
+
+/* 按钮组 */
+.btn-group-luxury {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.btn-group-luxury .btn-luxury {
+    border-radius: 0;
+    border-right-width: 1px;
+}
+
+.btn-group-luxury .btn-luxury:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.btn-group-luxury .btn-luxury:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right-width: 2px;
+}
+
+/* 浮动按钮 */
+.btn-luxury-floating {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.btn-luxury-floating:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+/* 加载状态 */
+.btn-luxury-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-luxury-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: btnSpin 1s linear infinite;
+}
+
+@keyframes btnSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .btn-luxury {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        min-width: 100px;
+        height: 44px;
+    }
+    
+    .btn-luxury-sm {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-width: 80px;
+        height: 32px;
+    }
+    
+    .btn-luxury-lg {
+        padding: 14px 28px;
+        font-size: 1rem;
+        min-width: 120px;
+        height: 52px;
+    }
+    
+    .btn-luxury-floating {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+}

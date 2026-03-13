@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加员工 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #16a085 100%);
+            min-height: 100vh;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 30px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .form-header h2 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .form-header p {
+            color: #718096;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control-modern {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        .form-control-modern:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        .form-select-modern {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        .form-select-modern:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        .btn-modern {
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+        .btn-secondary-modern {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        .btn-secondary-modern:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        /* 豪华导航栏样式 */
+        .luxury-navbar {
+            background: rgba(26, 26, 26, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid #10b981;
+            box-shadow: 0 4px 30px rgba(16, 185, 129, 0.2);
+        }
+        .luxury-brand {
+            font-weight: 700;
+            color: #10b981 !important;
+            font-size: 1.3rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+        .luxury-nav-link {
+            color: #e2e8f0 !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem !important;
+        }
+        .luxury-nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .luxury-nav-link:hover::before {
+            width: 80%;
+        }
+        .luxury-nav-link:hover {
+            color: #10b981 !important;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        }
+        .luxury-nav-link.active {
+            color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.15);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        }
+        .main-container {
+            margin-top: 80px;
+        }
+        .alert-modern {
+            border-radius: 12px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 豪华导航栏 -->
+    <nav class="navbar navbar-expand-lg luxury-navbar">
+        <div class="container">
+            <a class="navbar-brand luxury-brand" href="/">
+                <i class="fas fa-crown me-2"></i>皇家御苑酒店管理系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #10b981;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/rooms">房间管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/customers">客户管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link active" href="/employees">员工管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/reservations">预订管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/food-orders">餐饮订单</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/parking">停车管理</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2><i class="fas fa-user-plus me-3"></i>添加员工</h2>
+                        <p>填写员工信息，为酒店添加新的员工</p>
+                    </div>
+                    
+                    <!-- 错误信息显示 -->
+                    <div th:if="${error}" class="alert alert-danger alert-modern" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+                    
+                    <form th:action="@{/employees/add}" th:object="${employee}" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">姓名 *</label>
+                                    <input type="text" class="form-control-modern" id="name" th:field="*{name}" 
+                                           placeholder="请输入员工姓名" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="employeeNumber" class="form-label">工号 *</label>
+                                    <input type="text" class="form-control-modern" id="employeeNumber" th:field="*{employeeNumber}" 
+                                           placeholder="请输入员工工号" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">电话</label>
+                                    <input type="tel" class="form-control-modern" id="phone" th:field="*{phone}" 
+                                           placeholder="请输入联系电话">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="position" class="form-label">职位</label>
+                                    <select class="form-select-modern" id="position" th:field="*{position}">
+                                        <option value="">请选择职位</option>
+                                        <option value="前台接待">前台接待</option>
+                                        <option value="服务员">服务员</option>
+                                        <option value="厨师">厨师</option>
+                                        <option value="经理">经理</option>
+                                        <option value="主管">主管</option>
+                                        <option value="清洁工">清洁工</option>
+                                        <option value="保安">保安</option>
+                                        <option value="其他">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            <a href="/employees" class="btn-modern btn-secondary-modern">
+                                <i class="fas fa-arrow-left"></i>返回
+                            </a>
+                            <button type="submit" class="btn-modern btn-primary-modern">
+                                <i class="fas fa-save"></i>保存员工
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

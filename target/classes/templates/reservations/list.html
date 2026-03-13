@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预订管理 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 50%, #a855f7 100%);
+            min-height: 100vh;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 30px;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(142, 68, 173, 0.3);
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        .reservation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(142, 68, 173, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reservation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #a855f7, #c084fc);
+        }
+        .reservation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .reservation-id {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 10px;
+        }
+        .customer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .reservation-info {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+        .reservation-info i {
+            color: #8b5cf6;
+            width: 16px;
+            margin-right: 8px;
+        }
+        .amount-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 15px;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-confirmed {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        .status-checked-in {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .status-checked-out {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        .status-cancelled {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn-modern {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-checkin {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .btn-checkin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+        .btn-checkout {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+        .btn-cancel {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+            color: white;
+        }
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(142, 68, 173, 0.3);
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(142, 68, 173, 0.1);
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #6b21a8;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .stat-label {
+            color: #4a5568;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+        }
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand-modern {
+            font-weight: 700;
+            color: #8b5cf6 !important;
+            font-size: 1.3rem;
+        }
+        .nav-link-modern {
+            color: #4a5568 !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link-modern:hover {
+            color: #8b5cf6 !important;
+            transform: translateY(-1px);
+        }
+        .nav-link-modern.active {
+            color: #8b5cf6 !important;
+            font-weight: 600;
+        }
+        
+        /* 业务流程样式 */
+        .process-step {
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .process-step.active {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(142, 68, 173, 0.3);
+        }
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .process-step.active .step-icon {
+            color: white;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #e9ecef;
+        }
+        .timeline-marker.confirmed {
+            background: #f39c12;
+            box-shadow: 0 0 0 3px #f39c12;
+        }
+        .timeline-marker.checked-in {
+            background: #27ae60;
+            box-shadow: 0 0 0 3px #27ae60;
+        }
+        .timeline-marker.checked-out {
+            background: #3498db;
+            box-shadow: 0 0 0 3px #3498db;
+        }
+        .timeline-marker.cancelled {
+            background: #e74c3c;
+            box-shadow: 0 0 0 3px #e74c3c;
+        }
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        /* 统计项样式 */
+        .stat-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #8b5cf6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* 豪华导航栏样式 */
+        .luxury-navbar {
+            background: rgba(26, 26, 26, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid #8b5cf6;
+            box-shadow: 0 4px 30px rgba(139, 92, 246, 0.2);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .luxury-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #8b5cf6 !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .luxury-nav-link {
+            color: #f8f9fa !important;
+            font-weight: 500;
+            padding: 12px 20px !important;
+            margin: 0 5px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .luxury-nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .luxury-nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .luxury-nav-link:hover {
+            color: #8b5cf6 !important;
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .luxury-nav-link.active {
+            color: #8b5cf6 !important;
+            background: rgba(139, 92, 246, 0.15);
+        }
+        
+        /* 调整主容器顶部间距 */
+        .main-container {
+            margin-top: 80px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 豪华导航栏 -->
+    <nav class="navbar navbar-expand-lg luxury-navbar">
+        <div class="container">
+            <a class="navbar-brand luxury-brand" href="/">
+                <i class="fas fa-crown me-2"></i>皇家御苑酒店管理系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #8b5cf6;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/rooms">
+                            <i class="fas fa-bed me-1"></i>房间管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/customers">
+                            <i class="fas fa-users me-1"></i>客户管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/employees">
+                            <i class="fas fa-users-cog me-1"></i>员工管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link active" href="/reservations">
+                            <i class="fas fa-calendar-check me-1"></i>预订管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/food-orders">
+                            <i class="fas fa-utensils me-1"></i>餐饮订单
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/parking">
+                            <i class="fas fa-parking me-1"></i>停车管理
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-2"><i class="fas fa-calendar-check me-3"></i>预订管理</h1>
+                    <p class="mb-0 opacity-75">管理酒店预订信息，处理入住退房流程</p>
+                </div>
+                <a href="/reservations/add" class="btn-primary-modern">
+                    <i class="fas fa-plus"></i>创建预订
+                </a>
+            </div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(reservations)}">0</div>
+                <div class="stat-label">总预订数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(reservations.?[status.name() == 'CONFIRMED'])}">0</div>
+                <div class="stat-label">已确认</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(reservations.?[status.name() == 'CHECKED_IN'])}">0</div>
+                <div class="stat-label">已入住</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(reservations.?[status.name() == 'CHECKED_OUT'])}">0</div>
+                <div class="stat-label">已退房</div>
+            </div>
+        </div>
+
+        <!-- 业务流程状态栏 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-route me-2"></i>预订流程状态</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="process-step" th:classappend="${#lists.size(reservations.?[status.name() == 'CONFIRMED']) > 0} ? 'active' : ''">
+                                    <div class="step-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <h6>已确认</h6>
+                                    <span class="badge bg-warning" th:text="${#lists.size(reservations.?[status.name() == 'CONFIRMED'])}">0</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="process-step" th:classappend="${#lists.size(reservations.?[status.name() == 'CHECKED_IN']) > 0} ? 'active' : ''">
+                                    <div class="step-icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </div>
+                                    <h6>已入住</h6>
+                                    <span class="badge bg-success" th:text="${#lists.size(reservations.?[status.name() == 'CHECKED_IN'])}">0</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="process-step" th:classappend="${#lists.size(reservations.?[status.name() == 'CHECKED_OUT']) > 0} ? 'active' : ''">
+                                    <div class="step-icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </div>
+                                    <h6>已退房</h6>
+                                    <span class="badge bg-info" th:text="${#lists.size(reservations.?[status.name() == 'CHECKED_OUT'])}">0</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="process-step" th:classappend="${#lists.size(reservations.?[status.name() == 'CANCELLED']) > 0} ? 'active' : ''">
+                                    <div class="step-icon">
+                                        <i class="fas fa-times-circle"></i>
+                                    </div>
+                                    <h6>已取消</h6>
+                                    <span class="badge bg-danger" th:text="${#lists.size(reservations.?[status.name() == 'CANCELLED'])}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 今日预订概览 -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-calendar-day me-2"></i>今日预订概览</h5>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary active" data-filter="all">全部</button>
+                            <button class="btn btn-outline-primary" data-filter="confirmed">已确认</button>
+                            <button class="btn btn-outline-primary" data-filter="checked-in">已入住</button>
+                            <button class="btn btn-outline-primary" data-filter="checked-out">已退房</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline" th:if="${#lists.size(reservations) > 0}">
+                            <div class="timeline-item" th:each="reservation : ${reservations}" 
+                                 th:attr="data-status=${#strings.replace(reservation.status.name().toLowerCase(), '_', '-')}">
+                                <div class="timeline-marker" 
+                                     th:classappend="${reservation.status.name() == 'CONFIRMED'} ? 'confirmed' : 
+                                                    (${reservation.status.name() == 'CHECKED_IN'} ? 'checked-in' : 
+                                                     (${reservation.status.name() == 'CHECKED_OUT'} ? 'checked-out' : 'cancelled'))">
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1" th:text="${reservation.customer.name}">张三</h6>
+                                            <p class="mb-1 text-muted">
+                                                <i class="fas fa-bed me-1"></i>房间 <span th:text="${reservation.room.roomNumber}">101</span>
+                                                <span class="mx-2">|</span>
+                                                <i class="fas fa-calendar me-1"></i>
+                                                <span th:text="${#temporals.format(reservation.checkInDate, 'MM-dd')}">01-01</span> - 
+                                                <span th:text="${#temporals.format(reservation.checkOutDate, 'MM-dd')}">01-03</span>
+                                            </p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                <span th:text="${#temporals.format(reservation.createTime, 'HH:mm')}">14:30</span>
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="amount-display mb-2">
+                                                ¥<span th:text="${#numbers.formatDecimal(reservation.totalAmount, 1, 2)}">599.00</span>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <a th:if="${reservation.status.name() == 'CONFIRMED'}"
+                                                   th:href="@{/reservations/checkin/{id}(id=${reservation.id})}" 
+                                                   class="btn btn-sm btn-success me-1">
+                                                    <i class="fas fa-sign-in-alt"></i> 入住
+                                                </a>
+                                                <a th:if="${reservation.status.name() == 'CHECKED_IN'}"
+                                                   th:href="@{/reservations/checkout/{id}(id=${reservation.id})}" 
+                                                   class="btn btn-sm btn-info me-1">
+                                                    <i class="fas fa-sign-out-alt"></i> 退房
+                                                </a>
+                                                <a th:if="${reservation.status.name() != 'CHECKED_OUT'}"
+                                                   th:href="@{/reservations/cancel/{id}(id=${reservation.id})}" 
+                                                   class="btn btn-sm btn-danger"
+                                                   onclick="return confirm('确定要取消这个预订吗？')">
+                                                    <i class="fas fa-times"></i> 取消
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(reservations)}" class="text-center text-muted py-4">
+                            <i class="fas fa-calendar-check fa-3x mb-3"></i>
+                            <p>今日暂无预订</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 快速操作面板 -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bolt me-2"></i>快速操作</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="/reservations/add" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>创建新预订
+                            </a>
+                            <a href="/rooms/available" class="btn btn-outline-primary">
+                                <i class="fas fa-search me-2"></i>查看可用房间
+                            </a>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3">今日统计</h6>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number text-primary" th:text="${#lists.size(reservations)}">0</div>
+                                    <div class="stat-label">总预订</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number text-success" th:text="${#lists.size(reservations.?[status.name() == 'CHECKED_IN'])}">0</div>
+                                    <div class="stat-label">已入住</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="text-center py-5" th:if="${#lists.isEmpty(reservations)}">
+            <div class="mb-4">
+                <i class="fas fa-calendar-check" style="font-size: 4rem; color: #cbd5e0;"></i>
+            </div>
+            <h3 class="text-muted mb-3">暂无预订信息</h3>
+            <p class="text-muted mb-4">开始创建您的第一个预订吧！</p>
+            <a href="/reservations/add" class="btn-primary-modern">
+                <i class="fas fa-plus"></i>创建预订
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 预订状态筛选
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('[data-filter]');
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // 更新按钮状态
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选预订
+                    timelineItems.forEach(item => {
+                        const status = item.getAttribute('data-status');
+                        if (filter === 'all' || status === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

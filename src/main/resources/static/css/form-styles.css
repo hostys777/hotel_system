@@ -1,0 +1,428 @@
+/* 统一表单样式系统 */
+:root {
+    --form-primary: #667eea;
+    --form-primary-hover: #5a67d8;
+    --form-primary-focus: #4c51bf;
+    --form-primary-shadow: rgba(102, 126, 234, 0.1);
+    
+    --form-success: #10b981;
+    --form-success-shadow: rgba(16, 185, 129, 0.1);
+    
+    --form-danger: #ef4444;
+    --form-danger-shadow: rgba(239, 68, 68, 0.1);
+    
+    --form-warning: #f59e0b;
+    --form-warning-shadow: rgba(245, 158, 11, 0.1);
+    
+    --form-border: #d1d5db;
+    --form-border-focus: var(--form-primary);
+    --form-bg: #ffffff;
+    --form-text: #374151;
+    --form-placeholder: #9ca3af;
+    --form-label: #1f2937;
+}
+
+/* 表单容器 */
+.form-luxury {
+    background: var(--form-bg);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.form-luxury-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.form-luxury-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--form-label);
+    margin-bottom: 8px;
+}
+
+.form-luxury-subtitle {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* 表单组 */
+.form-group-luxury {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.form-group-luxury:last-child {
+    margin-bottom: 0;
+}
+
+/* 标签样式 */
+.form-label-luxury {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--form-label);
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.form-label-luxury.required::after {
+    content: '*';
+    color: var(--form-danger);
+    margin-left: 4px;
+}
+
+/* 输入框样式 */
+.form-control-luxury {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--form-text);
+    background: var(--form-bg);
+    border: 2px solid var(--form-border);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-control-luxury:focus {
+    outline: none;
+    border-color: var(--form-border-focus);
+    box-shadow: 0 0 0 3px var(--form-primary-shadow);
+    transform: translateY(-1px);
+}
+
+.form-control-luxury:hover:not(:focus) {
+    border-color: var(--form-primary-hover);
+}
+
+.form-control-luxury::placeholder {
+    color: var(--form-placeholder);
+    font-weight: 400;
+}
+
+/* 输入框状态 */
+.form-control-luxury.is-valid {
+    border-color: var(--form-success);
+    box-shadow: 0 0 0 3px var(--form-success-shadow);
+}
+
+.form-control-luxury.is-invalid {
+    border-color: var(--form-danger);
+    box-shadow: 0 0 0 3px var(--form-danger-shadow);
+}
+
+.form-control-luxury.is-warning {
+    border-color: var(--form-warning);
+    box-shadow: 0 0 0 3px var(--form-warning-shadow);
+}
+
+/* 文本域 */
+.form-control-luxury.textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* 选择框 */
+.form-select-luxury {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--form-text);
+    background: var(--form-bg) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") no-repeat right 12px center/16px 16px;
+    border: 2px solid var(--form-border);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    appearance: none;
+    cursor: pointer;
+}
+
+.form-select-luxury:focus {
+    outline: none;
+    border-color: var(--form-border-focus);
+    box-shadow: 0 0 0 3px var(--form-primary-shadow);
+    transform: translateY(-1px);
+}
+
+.form-select-luxury:hover:not(:focus) {
+    border-color: var(--form-primary-hover);
+}
+
+/* 复选框和单选框 */
+.form-check-luxury {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    margin-bottom: 16px;
+}
+
+.form-check-input-luxury {
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    border: 2px solid var(--form-border);
+    border-radius: 6px;
+    background: var(--form-bg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-check-input-luxury:checked {
+    background: var(--form-primary);
+    border-color: var(--form-primary);
+}
+
+.form-check-input-luxury:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-check-input-luxury:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--form-primary-shadow);
+}
+
+.form-check-label-luxury {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--form-text);
+    cursor: pointer;
+    margin: 0;
+}
+
+/* 单选框 */
+.form-radio-luxury {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    margin-bottom: 16px;
+}
+
+.form-radio-input-luxury {
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    border: 2px solid var(--form-border);
+    border-radius: 50%;
+    background: var(--form-bg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-radio-input-luxury:checked {
+    background: var(--form-primary);
+    border-color: var(--form-primary);
+}
+
+.form-radio-input-luxury:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+.form-radio-input-luxury:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--form-primary-shadow);
+}
+
+/* 输入组 */
+.input-group-luxury {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group-luxury .form-control-luxury {
+    border-radius: 0;
+    border-right: none;
+}
+
+.input-group-luxury .form-control-luxury:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.input-group-luxury .form-control-luxury:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 2px solid var(--form-border);
+}
+
+.input-group-luxury .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: #f9fafb;
+    border: 2px solid var(--form-border);
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+    white-space: nowrap;
+}
+
+/* 验证消息 */
+.form-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-feedback.valid {
+    color: var(--form-success);
+}
+
+.form-feedback.invalid {
+    color: var(--form-danger);
+}
+
+.form-feedback.warning {
+    color: var(--form-warning);
+}
+
+/* 表单帮助文本 */
+.form-text-luxury {
+    margin-top: 8px;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* 表单行 */
+.form-row-luxury {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -12px;
+}
+
+.form-row-luxury .form-group-luxury {
+    padding: 12px;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* 表单操作区 */
+.form-actions-luxury {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f3f4f6;
+}
+
+.form-actions-luxury.center {
+    justify-content: center;
+}
+
+.form-actions-luxury.space-between {
+    justify-content: space-between;
+}
+
+/* 搜索表单 */
+.form-search-luxury {
+    position: relative;
+    max-width: 400px;
+}
+
+.form-search-luxury .form-control-luxury {
+    padding-left: 48px;
+    padding-right: 48px;
+}
+
+.form-search-luxury .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+.form-search-luxury .search-clear {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.form-search-luxury .search-clear:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .form-luxury {
+        padding: 24px;
+        margin: 16px;
+    }
+    
+    .form-luxury-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-control-luxury,
+    .form-select-luxury {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+    
+    .form-actions-luxury {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .form-actions-luxury .btn-luxury {
+        width: 100%;
+    }
+    
+    .form-row-luxury .form-group-luxury {
+        min-width: 100%;
+    }
+}

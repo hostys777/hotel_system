@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #16a085 100%);
+            min-height: 100vh;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 30px;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #16a085 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        }
+        .search-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #1565c0;
+        }
+        .employee-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(72, 187, 120, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .employee-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #27ae60, #2ecc71, #16a085);
+        }
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .employee-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+        .employee-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .employee-info {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+        .employee-info i {
+            color: #27ae60;
+            width: 16px;
+            margin-right: 8px;
+        }
+        .position-badge {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-active {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+        .status-inactive {
+            background: linear-gradient(135deg, #a0aec0, #718096);
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn-modern {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        .btn-edit {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+        .btn-toggle {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+        .btn-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
+            color: white;
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+        }
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(245, 101, 101, 0.3);
+            color: white;
+        }
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+            color: white;
+        }
+        .btn-success-modern {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-success-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+            color: white;
+        }
+        .btn-secondary-modern {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        .btn-secondary-modern:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+            transform: translateY(-2px);
+        }
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand-modern {
+            font-weight: 700;
+            color: #27ae60 !important;
+            font-size: 1.3rem;
+        }
+        .nav-link-modern {
+            color: #4a5568 !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link-modern:hover {
+            color: #27ae60 !important;
+            transform: translateY(-1px);
+        }
+        .nav-link-modern.active {
+            color: #27ae60 !important;
+            font-weight: 600;
+        }
+        .modal-modern .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .modal-modern .modal-header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            border: none;
+        }
+        .modal-modern .btn-close {
+            filter: invert(1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-modern" href="/">
+                <i class="fas fa-hotel me-2"></i>酒店管理系统
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link nav-link-modern" href="/">首页</a>
+                <a class="nav-link nav-link-modern" href="/rooms">房间管理</a>
+                <a class="nav-link nav-link-modern" href="/customers">客户管理</a>
+                <a class="nav-link nav-link-modern active" href="/employees">员工管理</a>
+                <a class="nav-link nav-link-modern" href="/reservations">预订管理</a>
+                <a class="nav-link nav-link-modern" href="/food-orders">餐饮订单</a>
+                <a class="nav-link nav-link-modern" href="/parking">停车管理</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-2"><i class="fas fa-search me-3"></i>搜索结果</h1>
+                    <p class="mb-0 opacity-75">员工搜索结果页面</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="/employees" class="btn-secondary-modern">
+                        <i class="fas fa-arrow-left"></i>返回员工列表
+                    </a>
+                    <a href="/employees/add" class="btn-primary-modern">
+                        <i class="fas fa-plus"></i>添加员工
+                    </a>
+                    <button class="btn-success-modern" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="fas fa-search"></i>重新搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索结果显示 -->
+        <div class="search-info" th:if="${searchName != null}">
+            <i class="fas fa-info-circle me-2"></i>
+            搜索关键词: "<span th:text="${searchName}" class="fw-bold"></span>"，找到 <span th:text="${#lists.size(employees)}" class="fw-bold"></span> 个结果
+        </div>
+
+        <!-- 员工卡片网格 -->
+        <div class="row" th:if="${#lists.size(employees) > 0}">
+            <div class="col-lg-6 col-xl-4 mb-4" th:each="employee : ${employees}">
+                <div class="employee-card">
+                    <div class="d-flex align-items-start">
+                        <div class="employee-avatar">
+                            <span th:text="${#strings.substring(employee.name, 0, 1)}">A</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="employee-name" th:text="${employee.name}">张三</div>
+                                <span class="status-badge" 
+                                      th:classappend="${employee.isActive} ? 'status-active' : 'status-inactive'"
+                                      th:text="${employee.isActive ? '在职' : '离职'}">在职</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="position-badge" th:text="${employee.position}">前台接待</span>
+                                <span class="text-muted small" th:text="'工号: ' + ${employee.employeeNumber}">工号: E001</span>
+                            </div>
+                            <div class="employee-info" th:if="${employee.phone != null and employee.phone != ''}">
+                                <i class="fas fa-phone"></i><span th:text="${employee.phone}">13800138000</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a th:href="@{/employees/edit/{id}(id=${employee.id})}" 
+                           class="btn-modern btn-edit">
+                            <i class="fas fa-edit"></i>编辑
+                        </a>
+                        <a th:href="@{/employees/toggle-status/{id}(id=${employee.id})}" 
+                           class="btn-modern btn-toggle"
+                           th:text="${employee.isActive ? '离职' : '复职'}">
+                            <i class="fas fa-user-times" th:if="${employee.isActive}"></i>
+                            <i class="fas fa-user-check" th:if="${!employee.isActive}"></i>
+                        </a>
+                        <a th:href="@{/employees/delete/{id}(id=${employee.id})}" 
+                           class="btn-modern btn-delete"
+                           onclick="return confirm('确定要删除这个员工吗？')">
+                            <i class="fas fa-trash"></i>删除
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="text-center py-5" th:if="${#lists.isEmpty(employees)}">
+            <div class="mb-4">
+                <i class="fas fa-search" style="font-size: 4rem; color: #cbd5e0;"></i>
+            </div>
+            <h3 class="text-muted mb-3">没有找到匹配的员工</h3>
+            <p class="text-muted mb-4">请尝试其他搜索关键词</p>
+            <button class="btn-success-modern" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <i class="fas fa-search"></i>重新搜索
+            </button>
+        </div>
+    </div>
+
+    <!-- 搜索模态框 -->
+    <div class="modal fade modal-modern" id="searchModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-search me-2"></i>搜索员工</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/employees/search}" method="get">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">员工姓名</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   th:value="${searchName}" placeholder="请输入员工姓名（支持模糊搜索）" 
+                                   style="border-radius: 10px; border: 2px solid #e2e8f0; padding: 12px;">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" 
+                                style="border-radius: 25px; padding: 10px 25px;">取消</button>
+                        <button type="submit" class="btn-success-modern">
+                            <i class="fas fa-search"></i>搜索
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

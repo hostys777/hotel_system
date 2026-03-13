@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码测试 - 酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .qr-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .qr-code {
+            width: 250px;
+            height: 250px;
+            background: white;
+            border: 3px solid #dee2e6;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .qr-code canvas {
+            border-radius: 12px;
+        }
+        .amount-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            margin: 20px 0;
+        }
+        .payment-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="qr-container">
+            <h2><i class="fas fa-qrcode me-2"></i>二维码支付测试</h2>
+            
+            <div class="amount-display" id="amountDisplay">¥0.00</div>
+            
+            <div class="qr-code" id="qrCodeContainer">
+                <div class="text-muted">正在生成二维码...</div>
+            </div>
+            
+            <div class="payment-info">
+                <h5><i class="fas fa-info-circle me-2"></i>支付信息</h5>
+                <div id="paymentDetails">
+                    <div>订单号: <span id="orderId">-</span></div>
+                    <div>金额: <span id="amount">-</span></div>
+                    <div>客户: <span id="customer">-</span></div>
+                    <div>桌号: <span id="table">-</span></div>
+                    <div>时间: <span id="timestamp">-</span></div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button class="btn btn-primary me-2" onclick="generateNewQR()">
+                    <i class="fas fa-refresh me-1"></i>生成新二维码
+                </button>
+                <button class="btn btn-success" onclick="simulatePayment()">
+                    <i class="fas fa-check me-1"></i>模拟支付成功
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPaymentData = null;
+        
+        // 生成随机支付数据
+        function generateRandomPaymentData() {
+            const orderId = Math.floor(Math.random() * 10000) + 1000;
+            const amount = (Math.random() * 100 + 10).toFixed(2);
+            const customer = '客户' + Math.floor(Math.random() * 100);
+            const table = Math.floor(Math.random() * 20) + 1;
+            
+            return {
+                orderId: orderId,
+                amount: amount,
+                customer: customer,
+                table: table,
+                timestamp: Date.now(),
+                merchant: '酒店管理系统',
+                description: '餐饮订单支付'
+            };
+        }
+        
+        // 生成本地模拟二维码
+        function generateQRCode() {
+            const container = document.getElementById('qrCodeContainer');
+            container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-spinner fa-spin"></i><br>正在生成二维码...</div>';
+            
+            // 生成随机支付数据
+            currentPaymentData = generateRandomPaymentData();
+            
+            // 更新显示信息
+            document.getElementById('orderId').textContent = currentPaymentData.orderId;
+            document.getElementById('amount').textContent = '¥' + currentPaymentData.amount;
+            document.getElementById('customer').textContent = currentPaymentData.customer;
+            document.getElementById('table').textContent = currentPaymentData.table;
+            document.getElementById('timestamp').textContent = new Date(currentPaymentData.timestamp).toLocaleString();
+            document.getElementById('amountDisplay').textContent = '¥' + currentPaymentData.amount;
+            
+            // 生成支付URL
+            const paymentUrl = `weixin://wxpay/bizpayurl?pr=${btoa(JSON.stringify(currentPaymentData))}`;
+            
+            console.log('生成二维码，支付数据:', currentPaymentData);
+            console.log('支付URL:', paymentUrl);
+            
+            // 模拟生成二维码
+            setTimeout(() => {
+                container.innerHTML = '';
+                
+                // 创建二维码容器
+                const qrDiv = document.createElement('div');
+                qrDiv.className = 'local-qr-code';
+                qrDiv.style.cssText = `
+                    width: 250px;
+                    height: 250px;
+                    background: white;
+                    border: 3px solid #000;
+                    position: relative;
+                    margin: 0 auto;
+                    display: grid;
+                    grid-template-columns: repeat(25, 1fr);
+                    grid-template-rows: repeat(25, 1fr);
+                    gap: 1px;
+                    padding: 3px;
+                `;
+                
+                // 生成模拟二维码图案
+                generateQRPattern(qrDiv, currentPaymentData.orderId, currentPaymentData.amount);
+                
+                container.appendChild(qrDiv);
+                console.log('本地二维码生成成功');
+            }, 500);
+        }
+        
+        // 生成模拟二维码图案
+        function generateQRPattern(container, orderId, amount) {
+            // 基于订单ID和金额生成伪随机图案
+            const seed = orderId + parseInt(amount.replace('.', ''));
+            const random = new SeededRandom(seed);
+            
+            // 生成25x25的网格
+            for (let row = 0; row < 25; row++) {
+                for (let col = 0; col < 25; col++) {
+                    const cell = document.createElement('div');
+                    
+                    // 确定位置模式
+                    let isBlack = false;
+                    
+                    // 三个角落的定位点
+                    if ((row < 9 && col < 9) || 
+                        (row < 9 && col > 15) || 
+                        (row > 15 && col < 9)) {
+                        // 定位点外框
+                        if ((row === 0 || row === 8) && col >= 0 && col <= 8) isBlack = true;
+                        if ((col === 0 || col === 8) && row >= 0 && row <= 8) isBlack = true;
+                        // 定位点内部
+                        if (row >= 2 && row <= 6 && col >= 2 && col <= 6) isBlack = true;
+                    }
+                    // 中心点
+                    else if (row === 12 && col === 12) {
+                        isBlack = true;
+                    }
+                    // 其他位置使用伪随机
+                    else {
+                        isBlack = random.next() > 0.5;
+                    }
+                    
+                    cell.style.backgroundColor = isBlack ? '#000' : '#fff';
+                    cell.style.border = 'none';
+                    container.appendChild(cell);
+                }
+            }
+        }
+        
+        // 简单的伪随机数生成器
+        function SeededRandom(seed) {
+            this.seed = seed;
+            this.next = function() {
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            };
+        }
+        
+        // 生成新二维码
+        function generateNewQR() {
+            generateQRCode();
+        }
+        
+        // 模拟支付成功
+        function simulatePayment() {
+            if (currentPaymentData) {
+                alert(`支付成功！\n订单号: ${currentPaymentData.orderId}\n金额: ¥${currentPaymentData.amount}`);
+                generateQRCode(); // 生成新的二维码
+            } else {
+                alert('请先生成二维码');
+            }
+        }
+        
+        // 页面加载时生成二维码
+        document.addEventListener('DOMContentLoaded', function() {
+            generateQRCode();
+        });
+    </script>
+</body>
+</html>

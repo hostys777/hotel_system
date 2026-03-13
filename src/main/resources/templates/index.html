@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皇家御苑酒店管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/loading.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #c9a96e;
+            --secondary-gold: #d4af37;
+            --dark-gold: #8b7355;
+            --luxury-black: #1a1a1a;
+            --soft-white: #f8f9fa;
+            --elegant-gray: #6c757d;
+            --royal-purple: #6f42c1;
+            --deep-blue: #1e3a8a;
+            --luxury-silver: #b8b8b8;
+            --warm-gray: #4a4a4a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--soft-white);
+            overflow-x: hidden;
+        }
+        
+        /* 豪华导航栏 */
+        .luxury-navbar {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary-gold);
+            box-shadow: 0 4px 30px rgba(212, 175, 55, 0.2);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .luxury-navbar .container {
+            max-width: 100%;
+            padding: 0 20px;
+        }
+        
+        .luxury-navbar .navbar-nav {
+            flex-wrap: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .luxury-navbar .navbar-nav .nav-item {
+            flex-shrink: 0;
+        }
+        
+        .luxury-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-gold) !important;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .luxury-nav-link {
+            color: var(--soft-white) !important;
+            font-weight: 500;
+            padding: 10px 16px !important;
+            margin: 0 3px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+        
+        .luxury-nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .luxury-nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .luxury-nav-link:hover {
+            color: var(--primary-gold) !important;
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 英雄区域 */
+        .hero-section {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="%23d4af37" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--soft-white);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--elegant-gray);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .luxury-btn {
+            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+            border: none;
+            color: var(--luxury-black);
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .luxury-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .luxury-btn:hover::before {
+            left: 100%;
+        }
+        
+        .luxury-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+            color: var(--luxury-black);
+        }
+        
+        /* 功能模块区域 */
+        .features-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--primary-gold);
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-gold));
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--elegant-gray);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        
+        /* 豪华卡片样式 */
+        .luxury-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .luxury-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .luxury-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .luxury-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.2);
+            border-color: var(--primary-gold);
+        }
+        
+        .luxury-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-gold);
+            transition: all 0.3s ease;
+        }
+        
+        .luxury-card:hover .luxury-icon {
+            transform: scale(1.1);
+            color: var(--secondary-gold);
+        }
+        
+        .luxury-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--soft-white);
+            margin-bottom: 0.8rem;
+        }
+        
+        .luxury-card-description {
+            color: var(--elegant-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        /* 各模块描述文字颜色优化 */
+        .room-card .luxury-card-description { 
+            color: #e5e7eb; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .customer-card .luxury-card-description { 
+            color: #e0f2fe; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .employee-card .luxury-card-description { 
+            color: #ecfdf5; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .reservation-card .luxury-card-description { 
+            color: #f3e8ff; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .food-card .luxury-card-description { 
+            color: #fff7ed; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .parking-card .luxury-card-description { 
+            color: #ecfeff; 
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .luxury-card-btn {
+            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+            border: none;
+            color: var(--luxury-black);
+            padding: 8px 20px;
+            font-weight: 600;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        
+        .luxury-card-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .luxury-card-btn:hover::before {
+            left: 100%;
+        }
+        
+        .luxury-card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            color: var(--luxury-black);
+        }
+        
+        /* 特定模块颜色 - 更加内敛的配色 */
+        /* 房间管理 - 皇家金色主题 - 旋转缩放效果 */
+        .room-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #ffd700;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .room-card:hover {
+            transform: translateY(-12px) rotateY(5deg) scale(1.05);
+            box-shadow: 0 25px 50px rgba(255, 215, 0, 0.5);
+            border-color: #ffed4e;
+        }
+        .room-card .luxury-icon { 
+            color: #ffd700; 
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .room-card:hover .luxury-icon { 
+            color: #ffed4e; 
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+        .room-card .luxury-card-title { color: #ffd700; }
+        .room-card .luxury-card-btn {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        
+        /* 客户管理 - 深海蓝色主题 - 波浪效果 */
+        .customer-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #3b82f6;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+            transition: all 0.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .customer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        .customer-card:hover::before {
+            left: 100%;
+        }
+        .customer-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+            border-color: #60a5fa;
+        }
+        .customer-card .luxury-icon { 
+            color: #3b82f6; 
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .customer-card:hover .luxury-icon { 
+            color: #60a5fa; 
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+        }
+        .customer-card .luxury-card-title { color: #3b82f6; }
+        .customer-card .luxury-card-btn {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 员工管理 - 森林绿色主题 - 弹性弹跳效果 */
+        .employee-card {
+            background: linear-gradient(135deg, #0f1b0f 0%, #1a2e1a 100%);
+            border: 2px solid #10b981;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .employee-card:hover {
+            transform: translateY(-15px) scale(1.08);
+            box-shadow: 0 30px 60px rgba(16, 185, 129, 0.5);
+            border-color: #34d399;
+        }
+        .employee-card .luxury-icon { 
+            color: #10b981; 
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+        .employee-card:hover .luxury-icon { 
+            color: #34d399; 
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+        }
+        .employee-card .luxury-card-title { color: #10b981; }
+        .employee-card .luxury-card-btn {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 预订管理 - 紫色优雅主题 - 脉冲呼吸效果 */
+        .reservation-card {
+            background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 100%);
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+            transition: all 0.4s ease;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2); }
+            50% { box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4); }
+        }
+        .reservation-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.6);
+            border-color: #a78bfa;
+            animation: none;
+        }
+        .reservation-card .luxury-icon { 
+            color: #8b5cf6; 
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        .reservation-card:hover .luxury-icon { 
+            color: #a78bfa; 
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
+        }
+        .reservation-card .luxury-card-title { color: #8b5cf6; }
+        .reservation-card .luxury-card-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 餐饮订单 - 火焰橙色主题 - 摇摆火焰效果 */
+        .food-card {
+            background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%);
+            border: 2px solid #f97316;
+            box-shadow: 0 8px 32px rgba(249, 115, 22, 0.2);
+            transition: all 0.3s ease;
+            animation: flame-sway 4s ease-in-out infinite;
+        }
+        @keyframes flame-sway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            75% { transform: rotate(-1deg); }
+        }
+        .food-card:hover {
+            transform: translateY(-10px) scale(1.05) rotate(0deg);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.4);
+            border-color: #fb923c;
+            animation: none;
+        }
+        .food-card .luxury-icon { 
+            color: #f97316; 
+            text-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+        .food-card:hover .luxury-icon { 
+            color: #fb923c; 
+            text-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
+        }
+        .food-card .luxury-card-title { color: #f97316; }
+        .food-card .luxury-card-btn {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 停车管理 - 深海青色主题 - 涟漪扩散效果 */
+        .parking-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #14b8a6;
+            box-shadow: 0 8px 32px rgba(20, 184, 166, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .parking-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
+        .parking-card:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        .parking-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(20, 184, 166, 0.4);
+            border-color: #5eead4;
+        }
+        .parking-card .luxury-icon { 
+            color: #14b8a6; 
+            text-shadow: 0 0 20px rgba(20, 184, 166, 0.5);
+        }
+        .parking-card:hover .luxury-icon { 
+            color: #5eead4; 
+            text-shadow: 0 0 30px rgba(20, 184, 166, 0.8);
+        }
+        .parking-card .luxury-card-title { color: #14b8a6; }
+        .parking-card .luxury-card-btn {
+            background: linear-gradient(135deg, #14b8a6, #5eead4);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 页脚 */
+        .luxury-footer {
+            background: var(--luxury-black);
+            color: var(--elegant-gray);
+            padding: 40px 0;
+            text-align: center;
+            border-top: 2px solid var(--primary-gold);
+        }
+        
+        /* 下拉菜单样式 */
+        .luxury-dropdown {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 10px 0;
+        }
+        
+        .luxury-dropdown .dropdown-item {
+            color: var(--elegant-gray);
+            padding: 8px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .luxury-dropdown .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary-gold);
+        }
+        
+        .luxury-dropdown .dropdown-item-text {
+            color: var(--luxury-silver);
+            font-size: 0.9rem;
+            padding: 8px 20px;
+        }
+        
+        .footer-content {
+            font-size: 1.1rem;
+        }
+        
+        .footer-gold {
+            color: var(--primary-gold);
+            font-weight: 600;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero-title {
+            font-size: 3rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .luxury-card {
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 豪华导航栏 -->
+    <nav class="navbar navbar-expand-lg luxury-navbar">
+        <div class="container">
+            <a class="navbar-brand luxury-brand" href="/">
+                <i class="fas fa-crown me-2"></i>皇家御苑酒店管理系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: var(--primary-gold);">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" style="flex-wrap: nowrap; gap: 0; margin-left: auto;">
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/rooms">
+                            <i class="fas fa-bed me-1"></i>房间管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/customers">
+                            <i class="fas fa-users me-1"></i>客户管理
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${user.canManageEmployees()}">
+                        <a class="nav-link luxury-nav-link" href="/employees">
+                            <i class="fas fa-users-cog me-1"></i>员工管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/reservations">
+                            <i class="fas fa-calendar-check me-1"></i>预订管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/food-orders">
+                            <i class="fas fa-utensils me-1"></i>餐饮订单
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link luxury-nav-link" href="/parking">
+                            <i class="fas fa-parking me-1"></i>停车管理
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link luxury-nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${user.fullName}">用户</span>
+                        </a>
+                        <ul class="dropdown-menu luxury-dropdown">
+                            <li><span class="dropdown-item-text"><strong>角色：</strong><span th:text="${user.role.displayName}">角色</span></span></li>
+                            <li><span class="dropdown-item-text"><strong>等级：</strong><span th:text="${user.role.level}">等级</span></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">皇家御苑酒店管理系统</h1>
+                <p class="hero-subtitle">Royal Garden Hotel Management System</p>
+                <p class="hero-description">
+                    专为高端酒店设计的智能化管理平台，集成房间管理、客户服务、餐饮运营、停车服务等全方位功能，
+                    为您的酒店提供卓越的运营体验和客户服务。
+                </p>
+                <a href="#features" class="luxury-btn" onclick="smoothScrollToFeatures(event)">
+                    <i class="fas fa-rocket me-2"></i>开始体验
+            </a>
+        </div>
+    </div>
+    </div>
+
+    <!-- 功能模块区域 -->
+    <div id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">核心功能模块</h2>
+            <p class="section-subtitle">Comprehensive Management Solutions</p>
+            
+        <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="luxury-card room-card">
+                        <i class="fas fa-bed luxury-icon"></i>
+                        <h3 class="luxury-card-title">房间管理</h3>
+                        <p class="luxury-card-description">
+                            智能化房间管理系统，支持多种房型配置、
+                            实时状态监控、价格策略管理，
+                            为客人提供完美的住宿体验。
+                        </p>
+                        <a href="/rooms" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="luxury-card customer-card">
+                        <i class="fas fa-users luxury-icon"></i>
+                        <h3 class="luxury-card-title">客户管理</h3>
+                        <p class="luxury-card-description">
+                            全面的客户信息管理系统，
+                            记录客户偏好、历史记录、
+                            提供个性化服务，提升客户满意度。
+                        </p>
+                        <a href="/customers" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4" th:if="${user.canManageEmployees()}">
+                    <div class="luxury-card employee-card">
+                        <i class="fas fa-users-cog luxury-icon"></i>
+                        <h3 class="luxury-card-title">员工管理</h3>
+                        <p class="luxury-card-description">
+                            高效的员工信息管理平台，
+                            支持岗位分配、权限管理、
+                            绩效考核，打造专业服务团队。
+                        </p>
+                        <a href="/employees" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="luxury-card reservation-card">
+                        <i class="fas fa-calendar-check luxury-icon"></i>
+                        <h3 class="luxury-card-title">预订管理</h3>
+                        <p class="luxury-card-description">
+                            智能预订处理系统，
+                            支持在线预订、入住退房流程、
+                            房间分配优化，提升运营效率。
+                        </p>
+                        <a href="/reservations" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+            </div>
+        </div>
+        
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="luxury-card food-card">
+                        <i class="fas fa-utensils luxury-icon"></i>
+                        <h3 class="luxury-card-title">餐饮订单</h3>
+                        <p class="luxury-card-description">
+                            专业餐饮管理平台，
+                            支持菜品管理、订单处理、
+                            厨房工作流，提供优质餐饮服务。
+                        </p>
+                        <a href="/food-orders" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="luxury-card parking-card">
+                        <i class="fas fa-parking luxury-icon"></i>
+                        <h3 class="luxury-card-title">停车管理</h3>
+                        <p class="luxury-card-description">
+                            智能停车管理系统，
+                            实时监控停车位状态、
+                            自动计费、VIP服务，
+                            为客人提供便捷停车体验。
+                        </p>
+                        <a href="/parking" class="luxury-card-btn">
+                            <i class="fas fa-arrow-right me-1"></i>进入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 豪华页脚 -->
+    <footer class="luxury-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 <span class="footer-gold">皇家御苑酒店管理系统</span>. 保留所有权利.</p>
+                <p class="mt-2">Powered by Advanced Technology | Designed for Excellence</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 平滑滚动到功能模块区域
+        function smoothScrollToFeatures(event) {
+            event.preventDefault();
+            const featuresSection = document.getElementById('features');
+            featuresSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 创建表单并提交
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/logout';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加滚动时的导航栏效果
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.luxury-navbar');
+                if (window.scrollY > 100) {
+                    navbar.style.background = 'rgba(26, 26, 26, 0.98)';
+                    navbar.style.boxShadow = '0 4px 30px rgba(212, 175, 55, 0.3)';
+                } else {
+                    navbar.style.background = 'rgba(26, 26, 26, 0.95)';
+                    navbar.style.boxShadow = '0 4px 30px rgba(212, 175, 55, 0.2)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
