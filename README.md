@@ -323,15 +323,6 @@ mvn spring-boot:run
 3. 提交代码
 4. 创建 Pull Request
 
-## 📄 许可证
-
-本项目采用 MIT 许可证，详见 [LICENSE](LICENSE) 文件。
-
-## 📞 联系方式
-
-- **项目地址**: [GitHub Repository]
-- **问题反馈**: [Issues]
-- **邮箱**: [your-email@example.com]
 
 ---
 
